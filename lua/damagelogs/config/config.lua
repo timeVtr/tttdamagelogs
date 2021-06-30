@@ -13,13 +13,20 @@
 	Third argument: access to RDM Manager tab in Damagelogs (true/false).
 ]]
 --
-Damagelog:AddUser("owner", 4, true)
-Damagelog:AddUser("founder", 4, true)
 Damagelog:AddUser("superadmin", 4, true)
+Damagelog:AddUser("manager", 4, true)
+Damagelog:AddUser("headadmin", 4, true)
+Damagelog:AddUser("senioradmin", 4, true)
 Damagelog:AddUser("admin", 4, true)
-Damagelog:AddUser("operator", 3, false)
-Damagelog:AddUser("user", 2, false)
+Damagelog:AddUser("trialadmin", 4, true)
+Damagelog:AddUser("headmoderator", 4, true)
+Damagelog:AddUser("seniormoderator", 4, true)
+Damagelog:AddUser("moderator", 4, true)
+Damagelog:AddUser("trialmoderator", 4, true)
 
+
+Damagelog:AddUser("vip", 2, false)
+Damagelog:AddUser("user", 2, false)
 -- The F-key
 Damagelog.Key = KEY_F8
 --[[Is a message shown when an alive player opens the menu?
@@ -38,7 +45,7 @@ Damagelog.Respond_Command = "!respond"
 	Setting it to false will make the logs use SQLite (garrysmod/sv.db)
 ]]
 --
-Damagelog.Use_MySQL = false
+Damagelog.Use_MySQL = true
 --[[Autoslay and Autojail Mode
 REQUIRES ULX/SAM ! If you are using ServerGuard, set this to 0 (it will use ServerGuard's autoslay automatically)
 - 0 : Disables autoslay
@@ -52,49 +59,49 @@ REQUIRES ULX/SAM ! If you are using ServerGuard, set this to 0 (it will use Serv
 Damagelog.ULX_AutoslayMode = 1
 -- Force autoslain players to be innocents (ULX/SAM only)
 -- Do not enable this if another addon interferes with roles (Pointshop roles for example)
-Damagelog.ULX_Autoslay_ForceRole = true
+Damagelog.ULX_Autoslay_ForceRole = false
 -- Default autoslay reasons (ULX, SAM, and ServerGuard)
 Damagelog.Autoslay_DefaultReason = "Breaking Rules"
-Damagelog.Autoslay_DefaultReason1 = "Random Damage"
+Damagelog.Autoslay_DefaultReason1 = "Attempted RDM"
 Damagelog.Autoslay_DefaultReason2 = "RDM"
-Damagelog.Autoslay_DefaultReason3 = "2x RDM"
-Damagelog.Autoslay_DefaultReason4 = "Attempted Mass"
-Damagelog.Autoslay_DefaultReason5 = "Mass RDM"
-Damagelog.Autoslay_DefaultReason6 = "Super Mass"
-Damagelog.Autoslay_DefaultReason7 = "Ghosting"
-Damagelog.Autoslay_DefaultReason8 = "Hacking"
-Damagelog.Autoslay_DefaultReason9 = "Prop kill"
-Damagelog.Autoslay_DefaultReason10 = "Consistent RDM"
-Damagelog.Autoslay_DefaultReason11 = "Trolling"
-Damagelog.Autoslay_DefaultReason12 = "Minge"
+Damagelog.Autoslay_DefaultReason3 = "RDMx2"
+Damagelog.Autoslay_DefaultReason4 = "RDMx3"
+Damagelog.Autoslay_DefaultReason5 = "TRDM"
+Damagelog.Autoslay_DefaultReason6 = "Revenge RDM"
+Damagelog.Autoslay_DefaultReason7 = "Team Kill"
+Damagelog.Autoslay_DefaultReason8 = "Targeted"
+Damagelog.Autoslay_DefaultReason9 = "Lying"
+Damagelog.Autoslay_DefaultReason10 = "Improper Response"
+Damagelog.Autoslay_DefaultReason11 = "False Report"
+Damagelog.Autoslay_DefaultReason12 = "Leave"
 
 -- Default ban reasons (ULX and ServerGuard)
-Damagelog.Ban_DefaultReason1 = "Random Damage and leave"
-Damagelog.Ban_DefaultReason2 = "RDM and leave"
-Damagelog.Ban_DefaultReason3 = "2x RDM and leave"
-Damagelog.Ban_DefaultReason4 = "Attempted Mass and leave"
-Damagelog.Ban_DefaultReason5 = "Mass RDM"
-Damagelog.Ban_DefaultReason6 = "Super Mass"
-Damagelog.Ban_DefaultReason7 = "Ghosting"
-Damagelog.Ban_DefaultReason8 = "Hacking"
-Damagelog.Ban_DefaultReason9 = "Consistent RDM"
-Damagelog.Ban_DefaultReason10 = "Attempted RDM"
-Damagelog.Ban_DefaultReason11 = "Random Damage"
-Damagelog.Ban_DefaultReason12 = "Trolling"
+Damagelog.Ban_DefaultReason1 = "Consistent RDM"
+Damagelog.Ban_DefaultReason2 = "Attempted Mass RDM"
+Damagelog.Ban_DefaultReason3 = "Mass RDM"
+Damagelog.Ban_DefaultReason4 = "Consistent Targeted RDM"
+Damagelog.Ban_DefaultReason5 = "Homophobic Slurs"
+Damagelog.Ban_DefaultReason6 = "Racial Slurs"
+Damagelog.Ban_DefaultReason7 = "Excessive Harassment"
+Damagelog.Ban_DefaultReason8 = "Ghosting"
+Damagelog.Ban_DefaultReason9 = "Teaming"
+Damagelog.Ban_DefaultReason10 = "Advertising"
+Damagelog.Ban_DefaultReason11 = "Cheating"
+Damagelog.Ban_DefaultReason12 = "DDOS/DOX Threats"
 -- The number of days the logs last on the database (to avoid lags when opening the menu)
-Damagelog.LogDays = 61
+Damagelog.LogDays = 60
 -- Hide the Donate button on the top-right corner
-Damagelog.HideDonateButton = false
+Damagelog.HideDonateButton = true
 -- Use the Workshop to download content files
 Damagelog.UseWorkshop = true
 -- Force a language - When empty use user-defined language
-Damagelog.ForcedLanguage = ""
+Damagelog.ForcedLanguage = "english"
 -- Allow reports even with no staff online
-Damagelog.NoStaffReports = false
+Damagelog.NoStaffReports = true
 -- Allow more than 2 reports per round
-Damagelog.MoreReportsPerRound = false
+Damagelog.MoreReportsPerRound = true
 -- Allow reports before playing
-Damagelog.ReportsBeforePlaying = false
+Damagelog.ReportsBeforePlaying = true
 -- Private message prefix from RDM Manager
 Damagelog.PrivateMessagePrefix = "[RDM Manager]"
 
@@ -112,7 +119,7 @@ Damagelog.PrivateMessagePrefix = "[RDM Manager]"
 -- 0 - disabled
 -- 1 - create messages for new reports when there are no admins online
 -- 2 - create messages for every report
-Damagelog.DiscordWebhookMode = 0
+Damagelog.DiscordWebhookMode = 1
 
 
 -- Don't forget to set the value of "ttt_dmglogs_discordurl" convar to your webhook URL in server.cfg

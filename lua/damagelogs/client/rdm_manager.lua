@@ -924,7 +924,7 @@ net.Receive("DL_Answering_global", function(_len)
     local client = LocalPlayer()
 
     if client.IsActive and not client:IsActive() then
-        chat.AddText(Color(255, 62, 62), net.ReadString(), color_white, " " .. TTTLogTranslate(GetDMGLogLang, "IsAnswering"))
+        chat.AddText(Color(255, 62, 62), "| " .. net.ReadString(), Color(200, 200, 200, 255), " " .. TTTLogTranslate(GetDMGLogLang, "IsAnswering"))
     end
 end)
 

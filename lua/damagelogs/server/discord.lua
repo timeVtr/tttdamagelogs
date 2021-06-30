@@ -4,19 +4,18 @@ local POST_MODES = {
     ALWAYS = 2
 }
 
-local HTTP = HTTP
 local url = CreateConVar("ttt_dmglogs_discordurl", "", FCVAR_PROTECTED + FCVAR_LUA_SERVER, "TTTDamagelogs - Discord Webhook URL")
 local disabled = Damagelog.DiscordWebhookMode == POST_MODES.DISABLED
 local emitOnlyWhenAdminsOffline = Damagelog.DiscordWebhookMode == POST_MODES.WHEN_ADMINS_OFFLINE
 local limit = 5
 local reset = 0
 
-local use_chttp = pcall(require, "chttp")
-if use_chttp then
-    HTTP = CHTTP
-end
+--local use_chttp = pcall(require, "chttp")
+--if use_chttp then
+--    HTTP = CHTTP
+--end
 
-local function SendDiscordMessage(embed)
+local function SendDiscordMessageOffline(embed)
     local now = os.time(os.date("!*t"))
 
     if limit == 0 and now < reset then
@@ -32,7 +31,7 @@ local function SendDiscordMessage(embed)
         reset = headers["X-RateLimit-Reset"]
     end
 
-    HTTP({
+    CHTTP({
         method = "POST",
         url = url:GetString(),
         body = util.TableToJSON({
@@ -43,9 +42,35 @@ local function SendDiscordMessage(embed)
     })
 end
 
+local function SendDiscordMessageAll(embed)
+    local now = os.time(os.date("!*t"))
+
+    if limit == 0 and now < reset then
+        local function tcb()
+            SendDiscordMessage(embed)
+        end
+
+        timer.Simple(reset - now, tcb)
+    end
+
+    local function successCallback(status, body, headers)
+        limit = headers["X-RateLimit-Remaining"]
+        reset = headers["X-RateLimit-Reset"]
+    end
+
+    CHTTP({
+        method = "POST",
+        url = "",
+        body = util.TableToJSON({
+            embeds = {embed}
+        }),
+        type = "application/json",
+        success = successCallback
+    })
+end
 
 function Damagelog:DiscordMessage(discordUpdate)
-    if disabled or (emitOnlyWhenAdminsOffline and discordUpdate.adminOnline) then
+    if disabled then
         return
     end
 
@@ -134,11 +159,12 @@ function Damagelog:DiscordMessage(discordUpdate)
     end
 
 
-    if emitOnlyWhenAdminsOffline == false then
+    SendDiscordMessageAll(data)
+    if (emitOnlyWhenAdminsOffline and not discordUpdate.adminOnline) then
         data.footer = {
             text = TTTLogTranslate(nil, discordUpdate.adminOnline and "webhook_AdminsOnline" or "webhook_NoAdminsOnline")
         }
+        SendDiscordMessageOffline(data)
     end
-
-    SendDiscordMessage(data)
+    
 end

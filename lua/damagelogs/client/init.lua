@@ -28,13 +28,13 @@ include("damagelogs/client/info_label.lua")
 include("damagelogs/shared/privileges.lua")
 include("damagelogs/shared/autoslay.lua")
 
-if Damagelog.RDM_Manager_Enabled then
-    include("damagelogs/shared/rdm_manager.lua")
-    include("damagelogs/shared/chat.lua")
-    include("damagelogs/client/tabs/rdm_manager.lua")
-    include("damagelogs/client/rdm_manager.lua")
-    include("damagelogs/client/chat.lua")
-end
+
+include("damagelogs/shared/rdm_manager.lua")
+include("damagelogs/shared/chat.lua")
+include("damagelogs/client/tabs/rdm_manager.lua")
+include("damagelogs/client/rdm_manager.lua")
+include("damagelogs/client/chat.lua")
+
 
 local color_lightyellow = Color(255, 245, 148)
 local color_red = Color(255, 62, 62)
@@ -148,9 +148,7 @@ function Damagelog:OpenMenu()
     self:DrawShootsTab(x, y)
     self:DrawOldLogs(x, y)
 
-    if Damagelog.RDM_Manager_Enabled then
-        self:DrawRDMManager(x, y)
-    end
+    self:DrawRDMManager(x, y)
 
     self.About = vgui.Create("DButton", self.Menu)
     self.About:SetPos(x - 60, show_outdated and 57 or 27)

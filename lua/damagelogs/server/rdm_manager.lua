@@ -91,7 +91,7 @@ end
 
 function Player:UpdateReports()
     if not self:CanUseRDMManager() then
-        return
+       return
     end
 
     local tbl = util_TableToJSON(Damagelog.Reports)
@@ -152,7 +152,7 @@ end
 
 hook_Add("PlayerSay", "Damagelog_RDMManager", function(ply, text, teamOnly)
     if Damagelog.RDM_Manager_Enabled then
-        if string_Left(string_lower(text), #Damagelog.RDM_Manager_Command) == Damagelog.RDM_Manager_Command then
+		if string_Left(string_lower(text), #Damagelog.RDM_Manager_Command) == Damagelog.RDM_Manager_Command or string_Left(string_lower(text), #Damagelog.RDM_Manager_Command) == "/report" then
             Damagelog:StartReport(ply)
 
             return false

@@ -181,8 +181,8 @@ local function TakeAction()
         end
     end):SetImage("icon16/television.png")
 
-    if serverguard or sam or ulx then
-        if serverguard or sam or (ulx and (mode == 1 or mode == 2)) then
+    if serverguard or sam or ulx or d3a_damagelogs then
+        if serverguard or sam or (ulx and (mode == 1 or mode == 2)) or (d3a_damagelogs and (mode == 1 or mode == 2)) then
             local function SetConclusion(ply, num, reason)
                 net.Start("DL_Conclusion")
                 net.WriteUInt(1, 1)
@@ -251,7 +251,9 @@ local function TakeAction()
 
         menuPanel:AddOption(TTTLogTranslate(GetDMGLogLang, "SlayReportedPlayerNow"), function()
             if IsValid(attacker) then
-                if ulx then
+                if d3a_damagelogs then
+					RunConsoleCommand("d3a", "slay", attacker:SteamID())
+				elseif ulx then
                     RunConsoleCommand("ulx", "slay", attacker:Nick())
                 elseif sam then
                     RunConsoleCommand("sam", "slay", attacker:Nick())
@@ -274,7 +276,9 @@ local function TakeAction()
         slaynr:AddOption(TTTLogTranslate(GetDMGLogLang, "ReportedPlayer") .. " (" .. report.attacker_nick .. ")", function()
             if IsValid(attacker) then
                 Derma_StringRequest(TTTLogTranslate(GetDMGLogLang, "PrivateMessage"), string.format(TTTLogTranslate(GetDMGLogLang, "WhatToSay"), attacker:Nick()), "", function(msg)
-                    if ulx then
+                    if d3a_damagelogs then
+						RunConsoleCommand("d3a", "pm", attacker:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
+					elseif ulx then
                         RunConsoleCommand("ulx", "psay", attacker:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
                     elseif sam then
                         RunConsoleCommand("sam", "pm", attacker:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
@@ -290,7 +294,9 @@ local function TakeAction()
         slaynr:AddOption(TTTLogTranslate(GetDMGLogLang, "Victim") .. " (" .. report.victim_nick .. ")", function()
             if IsValid(victim) then
                 Derma_StringRequest(TTTLogTranslate(GetDMGLogLang, "PrivateMessage"), string.format(TTTLogTranslate(GetDMGLogLang, "WhatToSay"), victim:Nick()), "", function(msg)
-                    if ulx then
+                    if d3a_damagelogs then
+						RunConsoleCommand("d3a", "pm", victim:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
+					elseif ulx then
                         RunConsoleCommand("ulx", "psay", victim:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
                     elseif sam then
                         RunConsoleCommand("sam", "pm", victim:Nick(), Damagelog.PrivateMessagePrefix .. " " .. msg)
@@ -321,7 +327,9 @@ local function TakeAction()
 
         slaynr2:AddOption(TTTLogTranslate(GetDMGLogLang, "ReportedPlayer") .. " (" .. report.attacker_nick .. ")", function()
             if IsValid(attacker) then
-                if ulx then
+                if d3a_damagelogs then
+					RunConsoleCommand("d3a", mode == 1 and "removeslay" or "unjail", report.attacker)
+				elseif ulx then
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 elseif sam then
                     RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
@@ -329,7 +337,9 @@ local function TakeAction()
                     serverguard.command.Run("raslay", false, attacker:Nick())
                 end
             else
-                if ulx then
+				if d3a_damagelogs then
+					RunConsoleCommand("d3a", mode == 1 and "setslays" or "jail", report.attacker, "0", "Removed slays")
+                elseif ulx then
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
                 elseif sam then
                     RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.attacker, "0")
@@ -341,7 +351,9 @@ local function TakeAction()
 
         slaynr2:AddOption(TTTLogTranslate(GetDMGLogLang, "TheVictim") .. " (" .. report.victim_nick .. ")", function()
             if IsValid(victim) then
-                if ulx then
+                if d3a_damagelogs then
+                    RunConsoleCommand("d3a", mode == 1 and "removeslay" or "jail", report.victim)
+                elseif ulx then
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
                 elseif sam then
                     RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
@@ -349,7 +361,9 @@ local function TakeAction()
                     serverguard.command.Run("raslay", false, victim:Nick())
                 end
             else
-                if ulx then
+                if d3a_damagelogs then
+                    RunConsoleCommand("d3a", mode == 1 and "setslays" or "ajailid", report.victim, "0", "Removed slays")
+                elseif ulx then
                     RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
                 elseif sam then
                     RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", report.victim, "0")
@@ -673,7 +687,7 @@ local function DrawStatusMenuOption(id, menu)
 end
 
 function Damagelog:DrawRDMManager(x, y)
-    if LocalPlayer():CanUseRDMManager() and Damagelog.RDM_Manager_Enabled then
+    if LocalPlayer():CanUseRDMManager() then-- and Damagelog.RDM_Manager_Enabled then
         local Manager = vgui.Create("DPanelList")
         Manager:SetSpacing(10)
         local Background = vgui.Create("ColoredBox")
@@ -1033,7 +1047,7 @@ function PANEL:Init()
     self.CustomReason:SelectAll()
     self.Button = vgui.Create("DButton", self)
 
-    if ulx and mode == 2 then
+    if (ulx or d3a_damagelogs) and mode == 2 then
         self.Button:SetText("ajail!")
     else
         self.Button:SetText("aslay!")
@@ -1055,7 +1069,9 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
 
     self.Button.DoClick = function(panel)
         if IsValid(ply) then
-            if ulx then
+            if d3a_damagelogs then
+                RunConsoleCommand("d3a", mode == 1 and "autoslay" or "jail", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
+            elseif ulx then
                 RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
             elseif sam then
                 RunConsoleCommand("sam", mode == 1 and "aslayid" or "ajailid", ply:SteamID(), tostring(self.NumSlays), self.CurrentReason)
@@ -1065,7 +1081,9 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
 
             self.SetConclusion(ply:Nick(), self.NumSlays, self.CurrentReason)
         else
-            if ulx then
+            if d3a_damagelogs then
+                RunConsoleCommand("d3a", mode == 1 and "setslays" or "ajailid", (reported and report.attacker) or (not reported and report.victim), tostring(self.NumSlays), self.CurrentReason)
+            elseif ulx then
                 RunConsoleCommand("ulx", mode == 1 and "aslayid" or "ajailid", (reported and report.attacker) or (not reported and report.victim), tostring(self.NumSlays), self.CurrentReason)
                 self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.NumSlays, self.CurrentReason)
             elseif sam then
@@ -1293,7 +1311,9 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
 
     self.Button.DoClick = function(panel)
         if IsValid(ply) then
-            if ulx then
+            if d3a_damagelogs then
+                RunConsoleCommand("d3a", "ban", ply:SteamID(), tostring(self.BanTimeNumber), "minute", self.CurrentReason)
+            elseif ulx then
                 RunConsoleCommand("ulx", "ban", ply:Nick(), tostring(self.BanTimeNumber), self.CurrentReason)
             elseif sam then
                 RunConsoleCommand("sam", "ban", ply:Nick(), tostring(self.BanTimeNumber), self.CurrentReason)
@@ -1303,7 +1323,10 @@ function PANEL:SetPlayer(reported, ply, steamid, report)
 
             self.SetConclusion(ply:Nick(), self.TimeLabel:GetText(), self.CurrentReason)
         else
-            if ulx then
+            if d3a_damagelogs then
+                RunConsoleCommand("d3a", "ban", (reported and report.attacker) or (not reported and report.victim), tostring(self.BanTimeNumber), "minute", self.CurrentReason)
+                self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.TimeLabel:GetText(), self.CurrentReason)
+            elseif ulx then
                 RunConsoleCommand("ulx", "banid", (reported and report.attacker) or (not reported and report.victim), tostring(self.BanTimeNumber), self.CurrentReason)
                 self.SetConclusion((reported and report.attacker_nick) or (not reported and report.victim_nick), self.TimeLabel:GetText(), self.CurrentReason)
             elseif sam then

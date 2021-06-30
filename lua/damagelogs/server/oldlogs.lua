@@ -200,6 +200,9 @@ hook.Add("TTTEndRound", "Damagelog_EndRound", function()
 end)
 
 net.Receive("DL_AskLogsList", function(_, ply)
+	if not ply:CanUseRDMManager() then
+        return
+	end
     -- Check if there aren't any old logs available
     if not(Damagelog.OlderDate and Damagelog.LatestDate) then return end
 
@@ -227,6 +230,9 @@ local function SendLogs(ply, compressed, cancel)
 end
 
 net.Receive("DL_AskOldLogRounds", function(_, ply)
+	if not ply:CanUseRDMManager() then
+        return
+	end
     local id = net.ReadUInt(32)
     local year = net.ReadUInt(32)
     local month = string.format("%02d", net.ReadUInt(32))
@@ -269,6 +275,9 @@ net.Receive("DL_AskOldLogRounds", function(_, ply)
 end)
 
 net.Receive("DL_AskOldLog", function(_, ply)
+	if not ply:CanUseRDMManager() then
+        return
+	end
     if IsValid(ply) and ply:IsPlayer() and (not ply.lastLogs or (CurTime() - ply.lastLogs) > 2) then
         local _time = net.ReadUInt(32)
 

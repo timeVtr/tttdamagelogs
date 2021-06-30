@@ -340,9 +340,10 @@ if CLIENT then
         local list = net.ReadString()
         local reason = net.ReadString()
         local _time = net.ReadString()
+		local left = net.ReadUInt(32)
         if not IsValid(ply) or not ply:IsPlayer() or not list or not reason or not _time then return end
         local text = aslay and " has been autoslain by " or " has been autojailed by "
-        chat.AddText(Color(255, 62, 62), ply:Nick(), color_white, text, color_lightblue, list .. " ", color_white, _time .. " ago with the reason: '" .. reason .. "'.")
+        chat.AddText(Color(255, 62, 62), "| " .. ply:NameID(), Color(200, 200, 200, 255), text, Color(255, 62, 62), list, Color(200, 200, 200, 255), " from " .. _time .. " ago. Reason: " .. reason .. ". " .. (left > 0 and (tostring(left) .. " ") or "No ") .. ((left == 1) and "autoslay" or "autoslays") .. " left.")
     end)
 
     net.Receive("DL_AutoSlaysLeft", function()
@@ -358,7 +359,7 @@ if CLIENT then
         local slays = net.ReadUInt(32)
         if not nick or not steamid or not slays then return end
         local auto = aslay and " autoslay" or " autojail"
-        chat.AddText(Color(255, 62, 62), nick .. "(" .. steamid .. ") has disconnected with " .. slays .. auto .. (slays > 1 and "s" or "") .. " left!")
+        --chat.AddText(Color(255, 62, 62), nick .. "(" .. steamid .. ") has disconnected with " .. slays .. auto .. (slays > 1 and "s" or "") .. " left!")
     end)
 
     local ents = {}
